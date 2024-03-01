@@ -46,5 +46,5 @@ Este proyecto tiene como objetivo desarrollar un sistema de lectura de tarjetas 
 Una vez que hayas configurado y conectado todo correctamente, puedes ejecutar el programa principal del proyecto:
 
 ```bash
-rb puzzle1.rb
+ruby puzzle1.rb
 ```
