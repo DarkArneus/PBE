@@ -1,6 +1,6 @@
 # Proyecto de Universidad - Sistema de Control de Acceso con Raspberry Pi y Lector de NFC PN532
 
-Este proyecto tiene como objetivo desarrollar un sistema de control de acceso utilizando una Raspberry Pi 4 y un lector de NFC PN532. Este sistema permite la autenticación de usuarios mediante tarjetas NFC, brindando una solución práctica y segura para el control de acceso.
+Este proyecto tiene como objetivo desarrollar un sistema de lectura de tarjetas NFC utilizando una Raspberry Pi 4 y un lector de NFC PN532. Este sistema permite la lectura de UIDs de usuarios mediante tarjetas NFC.
 
 ## Requisitos
 
@@ -27,7 +27,8 @@ Este proyecto tiene como objetivo desarrollar un sistema de control de acceso ut
    - Ejecuta los siguientes comandos:
      ```bash
      sudo apt update
-     sudo apt install libnfc6 i2ctools
+     sudo apt install libnfc6 i2ctools ruby-full
+     sudo gem install nfc
      ```
 
 4. **Configuración del proyecto:**
