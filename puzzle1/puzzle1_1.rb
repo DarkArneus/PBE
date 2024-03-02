@@ -9,8 +9,6 @@ dev = ctx.open nil
 
 puts "Passa la teva targeta".green
 
-# Block until a tag is available, then print tag info
-
 # Imprimir la información de la tarjeta si se detecta
 loop do
   tag_info = dev.select
