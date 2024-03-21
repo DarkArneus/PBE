@@ -19,6 +19,7 @@ class Rfid
 	return tag_info
 	end
 end
+
 if __FILE__ == $0
 	rf = Rfid.new
 	uid = rf.read_uid
