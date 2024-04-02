@@ -11,6 +11,7 @@ vbox = Gtk::Box.new(:vertical, 10)
 window.add(vbox)
 
 label = Gtk::Label.new("Please login with your university card\n")
+label.override_background_color(0, Gdk::RGBA::new(0,0,1,1))
 vbox.pack_start(label)
 
 button = Gtk::Button.new(label: 'Clear')
@@ -31,10 +32,12 @@ end
 
 def clear_label(label)
     	label.set_text("Please login with your university card\n")
+	label.override_background_color(0, Gdk::RGBA::new(0,0,1,1))
 end
 
 def change_label(label)
-    		label.set_text("UID: #{@uid}")
+    	label.set_text("UID: #{@uid}")
+	label.override_background_color(0, Gdk::RGBA::new(1,0,0,1)) 
 end
 
 
@@ -47,5 +50,6 @@ button.signal_connect 'clicked' do
 end
 
 window.show_all
+window.signal_connect("delete_event"){thread.kill;Gtk.main_quit}
 Gtk.main
 
