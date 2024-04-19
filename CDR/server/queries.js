@@ -29,5 +29,9 @@ function cercaEstudiant(uid, request, response){
   }) 
 }
 
-module.exports = { cercaEstudiant };
+function timetables(){
+  
+}
+
+module.exports = { cercaEstudiant, timetables};
 
