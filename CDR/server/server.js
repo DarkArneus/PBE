@@ -19,7 +19,7 @@ const server = http.createServer((request, response) => {
           console.log(student_id);
           test = queries.cercaEstudiant(request, response);
         }else{
-          sql = `SELECT * FROM ${table} WHERE uid = ${student_id}` + queries.searchQuery(request, response);
+          sql = `SELECT * FROM ${table} WHERE student = '${student_id}'` + queries.searchQuery(request, response);
           console.log(sql);
           queries.writeResponse(sql, response);
         }
