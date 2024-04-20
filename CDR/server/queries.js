@@ -67,45 +67,18 @@ function searchQuery(request, response) {
       console.log(query);
     }
   }
-
-// SELECT * FROM marks WHERE student_id = 12345678 AND mark < 9 ORDER BY asc AND subject = 'AST' LIMIT 4
-  /*for (const reserve of reserved_key) {
-    if(query.hasOwnProperty(reserve)) {
-      console.log(reserve)
-      reserved
-    }
-  }*/
-
-  /*if (param_keys.length) { //mirem que no tinguem una peticio buida sense parametres
-    for (let i = 0; i < reserved_key.length; i++) {
-      if (param_keys.includes(reserved_key[i])) {
-        reserved_found.push(param_keys.splice(i, 1)[0]);
-        reserved_values.push(param_values.splice(i, 1));
-        console.log(reserved_found);
-      }
-    }*/
-
-    /*for (let k = 0; k < param_keys.length; k++) { //for
-      param_keys[k] += " =";
-      for (let j = 0; j < keywords; j++) {
-        if (param_keys[k].includes(keywords[j]))
-          param_keys[k] = param_keys[k].replace(keywords[j + " ="], keywords_value[j]);
-        console.log(param_keys[k]);
-      }
-    }*/
-
+  
     for (const clave in query) {
-      sql = sql + ` AND ${clave} ${query[clave]}`;
-      console.log(sql);
+      if (clave !== 'limit') { // Ignorar el límite temporalmente
+        sql = sql + ` AND ${clave} ${query[clave]}`;
+        console.log(sql);
+      }
     }
 
-    /*for (let i = 0; i < param_keys.length; i++) {
-      sql = sql + ` AND ${param_keys[i]} = ${param_values[i]}`;
-      console.log(sql);
+    if ('limit' in query) {
+      sql = sql + ` LIMIT ${query['limit'].replace(/['=]/g, '')}`;
     }
-    for (let i = 0; i < reserved_found.length; i++) {
-      sql = sql + ` ${reserved_found[i]} ${reserved_values[i]}`;
-    }*/
+
     return sql+';';
   //} 
 }
