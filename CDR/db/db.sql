@@ -11,7 +11,7 @@ INSERT INTO students VALUES
 ('Illo Juan', ''),
 ('Isabel Diaz', '60B69521');
 
-CREATE TABLE tasks (date VARCHAR(10) NOT NULL, subject VARCHAR(10) NOT NULL, name VARCHAR(20) NOT NULL, student VARCHAR(8) NOT NULL);
+CREATE TABLE tasks (date DATE NOT NULL,subject VARCHAR(10) NOT NULL,name VARCHAR(20) NOT NULL,student VARCHAR(8) NOT NULL);
 INSERT INTO tasks VALUES
 ('2024-04-22', 'PBE', 'Puzzle 1', '60B69521'),
 ('2024-04-22', 'PBE', 'Puzzle 1', ''),
