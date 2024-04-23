@@ -2,13 +2,22 @@ const mysql = require('mysql');
 var url = require('url');
 const pool = mysql.createPool({
      host: '127.0.0.1', 
-     user: 'kappa', 
-     password: 'kappa',
+     user: 'pbe', 
+     password: 'pbe',
      database: 'cdr',
      port: 3306
 });
 
-function writeResponse(sql, response) {
+function objectToArray(obj) {
+  return Object.keys(obj).map(key => {
+    return {
+      parameter : key,
+      value: obj[key]
+    };
+  });
+}
+
+function writeResponse(sql, response, table) {
   pool.getConnection(function(err, connection) {
     if (err){
       console.error('Error al obtener la conexión: ', err)
@@ -27,60 +36,70 @@ function writeResponse(sql, response) {
       response.writeHead(200, {
         "Content-Type": "application/json",
       });
+      const jsonArray = { [table] : [] };
 
-      response.write(
-        JSON.stringify(results));
+      results.forEach(result => {
+        jsonArray[table].push(result);
+      });
+      console.log(JSON.stringify(jsonArray));
+      response.write(JSON.stringify(jsonArray));
       response.end();
     });
   }) 
 }
 
-function cercaEstudiant(request, response){
-    sql = 'SELECT name FROM students WHERE student_id='+url.parse(request.url,true).query.student_id+';';
-    writeResponse(sql, response);
-}
-
 function searchQuery(request, response) {
+  const date = new Date(Date.now());
+  const now = date.getFullYear()+ '-' + (date.getMonth()+1) + '-' + date.getDate();
   const reqURL = request.url;
-  // PARSE
   var q = url.parse(reqURL, true); // parseamos la url
-  query = q.query;
-  param_keys = Object.keys(q.query); // retorna un array amb els parametres
-  param_values = Object.values(q.query); //retorna array amb els valors dels parametres
-  const keywordsOb={'[gt]': ' >', '[lt]':' <', '[gte]':' >=', '[lte]':' <='};
-  const reserved_key = ['limit'];
-  reserved = {}
+  query = objectToArray(q.query);
+  const keywords = objectToArray({'[gt]': ' >', '[lt]':' <', '[gte]':' >=', '[lte]':' <=', 'now': now,'Mon': 1, 'Tue': 2,'Wed': 3, 'Thu': 4, 'Fri':5});
   var sql="";
+
+
   //example.com/marks?subject=abc&name=123
-  console.log(query);
   // FOR PER CAMBIAR: param1[gt] per param1 > per fer la query SQL
-  for (let clave in query) {
-    query[clave]='= ' + "'" + query[clave] + "'";
-    for (let keyword in keywordsOb) {
-      if (clave.includes(keyword)) {
-        old = clave
-        clave = clave.replace(keyword, keywordsOb[keyword]);
-        query[clave] = query[old].replace('= ','');
-        delete query[old];
-        console.log(clave);
+  for (let queryObj of query) {
+    queryObj.parameter+=' =';
+    for(let keywordObj of keywords) {
+      if (queryObj.parameter.includes(keywordObj.parameter)) {
+        queryObj.parameter=queryObj.parameter.replace(keywordObj.parameter + ' =', keywordObj.value);
       }
-      console.log(query);
+      if (queryObj.value==keywordObj.parameter)
+        queryObj.value=keywordObj.value;
     }
+    if(queryObj.parameter != 'limit =')
+      sql = sql + ` AND ${queryObj.parameter} '${queryObj.value}'`;
   }
-  
-    for (const clave in query) {
-      if (clave !== 'limit') { // Ignorar el límite temporalmente
-        sql = sql + ` AND ${clave} ${query[clave]}`;
-        console.log(sql);
-      }
-    }
+  console.log(query);
 
-    if ('limit' in query) {
-      sql = sql + ` LIMIT ${query['limit'].replace(/['=]/g, '')}`;
-    }
 
-    return sql+';';
-  //} 
+  // Ordenació per defecte en task. Primer la tasca més propera al dia d'avui
+  if (q.pathname == '/tasks')
+    sql = sql + ` ORDER BY ABS(DATEDIFF(CURRENT_DATE, date)) ASC`;
+  // Ordenació per defecte de timetables. 
+  else if (q.pathname == '/timetables') {
+    if(query.some(obj => Object.values(obj).includes("day =")))
+      diaDef = (query.find(obj => obj.parameter == 'day =')).value;
+    else
+      diaDef = date.getDay();
+    sql = sql + ` ORDER BY FIELD(day`;
+    for(let i=0; i<6;i++) {
+      dia = (diaDef+i)%6;
+      sql = sql + ` , '${dia.toString()}'`;
+    }
+    sql+=')'
+  } else if (q.pathname == 'marks')
+    sql = sql;
+
+
+  // Afegim el limit al final si està inclós en la query.
+  const limitObj = query.find(obj => obj.parameter === 'limit =');
+  if (limitObj) {
+    sql = `${sql} LIMIT ${limitObj.value}`;
+  }
+  return sql + ';';
 }
 
-module.exports = { cercaEstudiant, searchQuery, writeResponse};
+module.exports = {searchQuery, writeResponse};
