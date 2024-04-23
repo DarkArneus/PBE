@@ -7,7 +7,6 @@ const server = http.createServer((request, response) => {
     const reqURL = request.url;
     var q = url.parse(reqURL, true);
     table = q.pathname.slice(1); //  cogemos lo que hay antes de ?
-                                 //example.com/marks?subject=abc&name=123
 
     switch (reqMethod) {
       default: {
@@ -16,12 +15,12 @@ const server = http.createServer((request, response) => {
       case "GET": {
         if(table === "students") {
           student_id = q.query.student_id;
-          console.log(student_id);
-          test = queries.cercaEstudiant(request, response);
+          sql = `SELECT name FROM students WHERE student_id='${url.parse(request.url,true).query.student_id}';`;
+          queries.writeResponse(sql, response, table);
         }else{
           sql = `SELECT * FROM ${table} WHERE student = '${student_id}'` + queries.searchQuery(request, response);
           console.log(sql);
-          queries.writeResponse(sql, response);
+          queries.writeResponse(sql, response, table);
         }
       }
     }
