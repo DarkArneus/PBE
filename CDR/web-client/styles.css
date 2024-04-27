@@ -1,0 +1,49 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.signin {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.content {
+    text-align: center;
+}
+
+.form {
+    margin-top: 20px;
+}
+
+.inputBox {
+    margin-bottom: 15px;
+}
+
+.inputBox input {
+    width: calc(100% - 20px); /* Añadido: Restar el padding del ancho */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.links {
+    margin-top: 10px;
+}
+
+.links a {
+    color: #007bff;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}

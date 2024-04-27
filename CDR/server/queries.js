@@ -2,8 +2,8 @@ const mysql = require('mysql');
 var url = require('url');
 const pool = mysql.createPool({
      host: '127.0.0.1', 
-     user: 'pbe', 
-     password: 'pbe',
+     user: 'kappa', 
+     password: 'kappa',
      database: 'cdr',
      port: 3306
 });
