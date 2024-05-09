@@ -17,6 +17,9 @@ const server = http.createServer((request, response) => {
           student_id = q.query.student_id;
           sql = `SELECT name FROM students WHERE student_id='${url.parse(request.url,true).query.student_id}';`;
           queries.writeResponse(sql, response, table);
+        }else   if(table ===  "logout"){
+          student_id = 0;
+          queries.logoutFunction(response)
         }else{
           sql = `SELECT * FROM ${table} WHERE student = '${student_id}'` + queries.searchQuery(request, response);
           console.log(sql);

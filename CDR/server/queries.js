@@ -16,7 +16,11 @@ function objectToArray(obj) {
     };
   });
 }
-
+function logoutFunction(response){
+  response.writeHead(200, { "Content-Type": "text/plain" });
+  response.write("¡Logout exitoso!");
+  response.end();
+}
 function writeResponse(sql, response, table) {
   pool.getConnection(function(err, connection) {
     if (err){
@@ -101,4 +105,4 @@ function searchQuery(request, response) {
   return sql + ';';
 }
 
-module.exports = {searchQuery, writeResponse};
+module.exports = {searchQuery, writeResponse, logoutFunction};
