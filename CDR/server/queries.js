@@ -32,7 +32,6 @@ function writeResponse(sql, response, table) {
         response.end()
         return;
       }
-
       response.writeHead(200, {
         "Content-Type": "application/json",
       });

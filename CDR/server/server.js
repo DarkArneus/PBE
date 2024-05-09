@@ -7,7 +7,7 @@ const server = http.createServer((request, response) => {
     const reqURL = request.url;
     var q = url.parse(reqURL, true);
     table = q.pathname.slice(1); //  cogemos lo que hay antes de ?
-
+    response.setHeader('Access-Control-Allow-Origin', '*')
     switch (reqMethod) {
       default: {
         defaultHandler(request, response);
