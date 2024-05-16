@@ -1,11 +1,13 @@
 body {
-    margin: 0;
-    padding: 0;
     background-color: #000;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+}
+
+#grid th {
+    size: 200px;
 }
 
 .signin {
@@ -15,6 +17,24 @@ body {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     width: 400px; /* Aumentar el ancho */
     height: auto; /* Permitir que la altura se ajuste automáticamente */
+}
+
+
+
+#grid {
+    border-collapse: collapse;
+    width: 100%; /* Ajusta este valor según tus necesidades */
+}
+
+#grid th, #grid td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#grid th {
+    background-color: #4CAF50;
+    color: white;
+    text-align: left;
 }
 
 .content {
@@ -134,4 +154,11 @@ body {
 
 .search-bar button:hover {
     background-color: #0056b3;
+}
+
+#grid {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 5px 0 0 5px;
+    border: 1px solid #000;
 }
