@@ -1,14 +1,21 @@
 //const mysql = require('mysql');
 import mysql from 'mysql';
 //var url = require('url');
+
 import { URL, URLSearchParams } from 'url';
 const pool = mysql.createPool({
   host: '127.0.0.1',
-  user: 'pbe',
-  password: 'pbe',
+  user: 'kappa',
+  password: 'kappa',
   database: 'cdr',
   port: 3306
 });
+
+function logoutFunction(response){
+  response.writeHead(200, { "Content-Type": "text/plain" });
+  response.write("¡Logout exitoso!");
+  response.end();
+}
 
 function writeResponse(sql, response, table) {
   pool.getConnection(function (err, connection) {
@@ -46,12 +53,11 @@ function writeResponse(sql, response, table) {
 
 function searchQuery(request, response) {
   const date = new Date(Date.now());
-  const now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+  const now = date.getFullYear()+ '-' + (date.getMonth()+1) + '-' + date.getDate();
   const url = new URL(request.url, "http://127.0.0.1:9000");
   const params = new URLSearchParams(url.search);
   var sql = "";
   const keywords2 = { '[gt]': ' >', '[lt]': ' <', '[gte]': ' >=', '[lte]': ' <=', 'now': now, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5 };
-
 
   //example.com/marks?subject=abc&name=123
   // FOR PER CAMBIAR: param1[gt] per param1 > per fer la query SQL
@@ -62,35 +68,34 @@ function searchQuery(request, response) {
     let afegit = false;
     for (let [keyword, valueword] of Object.entries(keywords2)) {
       if (key.includes(keyword)) {
-        sql += ` AND ${key.replace(keyword, valueword)}`
+        key = key.replace(keyword, valueword);
         if (value == keyword)
-          sql += ` ${valueword}`;
-        else
-          sql += ` ${value}`;
-
+          value = valueword;
         afegit = true;
-        break;
+        continue;
       }
-      if(!afegit) {
-        sql += ` AND ${key}`;
-        if (value == keyword)
-          sql += ` ${valueword}`;
-        else
-          sql += ` = ${value}`;
+      if(value == keyword) {
+        value = valueword;
         break;
       }
     }
+    if(!afegit) {
+      sql += ` AND ${key} = '${value}'`;
+    } else{
+      sql += ` AND ${key} '${value}'`;
+    }
+    if(key == 'day')
+      diaDef = parseInt(value, 10);
   }
-
-
+  var dia;
+  var diaDef;
   // Ordenació per defecte en task. Primer la tasca més propera al dia d'avui
   if (url.pathname == '/tasks')
     sql = sql + ` ORDER BY ABS(DATEDIFF(CURRENT_DATE, date)) ASC`;
   // Ordenació per defecte de timetables. 
   else if (url.pathname == '/timetables') {
-    if (params.has('day'))
-      diaDef = params.get('day');
-    else
+    console.log(params.get('day'));
+    if (!params.has('day'))
       diaDef = date.getDay();
     sql = sql + ` ORDER BY FIELD(day`;
     for (let i = 0; i < 6; i++) {
@@ -110,4 +115,4 @@ function searchQuery(request, response) {
   return sql + ';';
 }
 
-export { writeResponse, searchQuery};
+export { writeResponse, searchQuery, logoutFunction};

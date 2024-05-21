@@ -5,11 +5,11 @@ USE cdr;
 -- STUDENTS
 CREATE TABLE students (name VARCHAR(50), student_id VARCHAR(8));
 INSERT INTO students VALUES
-('Amador Rivas', '12345678'),
-('Pedro Sanchez',''),
-('Alex Elcapo', ''),
-('Illo Juan', ''),
-('Isabel Diaz', '60B69521');
+('Felix Stengele', '12345678'),
+('Test 1234',''),
+('Alex Garcia', ''),
+('Jaqueline Khalioulline', ''),
+('Arnau Sola', '60B69521');
 
 CREATE TABLE tasks (date DATE NOT NULL,subject VARCHAR(10) NOT NULL,name VARCHAR(20) NOT NULL,student VARCHAR(8) NOT NULL);
 INSERT INTO tasks VALUES

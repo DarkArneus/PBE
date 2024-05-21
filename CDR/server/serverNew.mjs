@@ -1,5 +1,5 @@
 //const queries = require('./queries');
-import { writeResponse, searchQuery} from './queriesNew.mjs';
+import { writeResponse, searchQuery, logoutFunction} from './queriesNew.mjs';
 //var url = require('url');
 import { URL } from 'url';
 //const http = require('http');
@@ -10,8 +10,7 @@ const server = http.createServer((request, response) => {
     const reqURL = request.url;
     var q = new URL(reqURL, `http://${request.headers.host}`);
     var table = q.pathname.slice(1); //  cogemos lo que hay antes de ?
-                                 //example.com/marks?subject=abc&name=123
-
+    response.setHeader('Access-Control-Allow-Origin', '*')
     switch (reqMethod) {
       default: {
         defaultHandler(request, response);
@@ -21,6 +20,9 @@ const server = http.createServer((request, response) => {
           student_id = q.searchParams.get('student_id');
           var sql = `SELECT name FROM students WHERE student_id='${student_id}';`;
           writeResponse(sql, response, table);
+        }else   if(table ===  "logout"){
+          student_id = 0;
+          logoutFunction(response)
         }else{
           var sql = `SELECT * FROM ${table} WHERE student = '${student_id}'` + searchQuery(request, response);
           console.log(sql);
