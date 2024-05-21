@@ -1,5 +1,7 @@
-const mysql = require('mysql');
-var url = require('url');
+//const mysql = require('mysql');
+import mysql from 'mysql';
+//var url = require('url');
+import { URL, URLSearchParams } from 'url';
 const pool = mysql.createPool({
   host: '127.0.0.1',
   user: 'pbe',
@@ -11,7 +13,10 @@ const pool = mysql.createPool({
 function writeResponse(sql, response, table) {
   pool.getConnection(function (err, connection) {
     if (err) {
-      console.error('Error al obtener la conexión: ', err)
+      console.error('Error al obtener la conexión: ', err);
+      response.writeHead(500, {"Content-Type": "application/json"});
+      response.write(JSON.stringify({error : 'Error al obtener la conexion'}));
+      response.end;
       return;
     }
 
@@ -34,9 +39,9 @@ function writeResponse(sql, response, table) {
       });
       console.log(JSON.stringify(jsonArray));
       response.write(JSON.stringify(jsonArray));
+      response.end();
     });
   })
-  response.end();
 }
 
 function searchQuery(request, response) {
@@ -52,16 +57,21 @@ function searchQuery(request, response) {
   // FOR PER CAMBIAR: param1[gt] per param1 > per fer la query SQL
 
   for (let [key, value] of params.entries()) {
+    if (key == 'limit') continue;
+
+    let afegit = false;
     for (let [keyword, valueword] of Object.entries(keywords2)) {
-      if (key.includes(keyword) && key != 'limit') {
+      if (key.includes(keyword)) {
         sql += ` AND ${key.replace(keyword, valueword)}`
-        if (value == keyword && key != 'limit')
+        if (value == keyword)
           sql += ` ${valueword}`;
-        else if(key != 'limit')
+        else
           sql += ` ${value}`;
+
+        afegit = true;
         break;
       }
-      if(key != 'limit') {
+      if(!afegit) {
         sql += ` AND ${key}`;
         if (value == keyword)
           sql += ` ${valueword}`;
@@ -71,7 +81,6 @@ function searchQuery(request, response) {
       }
     }
   }
-  console.log("new" +sql);
 
 
   // Ordenació per defecte en task. Primer la tasca més propera al dia d'avui
@@ -79,8 +88,8 @@ function searchQuery(request, response) {
     sql = sql + ` ORDER BY ABS(DATEDIFF(CURRENT_DATE, date)) ASC`;
   // Ordenació per defecte de timetables. 
   else if (url.pathname == '/timetables') {
-    if ("day" in params)
-      diaDef = params.day.value;
+    if (params.has('day'))
+      diaDef = params.get('day');
     else
       diaDef = date.getDay();
     sql = sql + ` ORDER BY FIELD(day`;
@@ -94,10 +103,11 @@ function searchQuery(request, response) {
 
 
   // Afegim el limit al final si està inclós en la query.
-  if ('limit' in params) {
-    sql = `${sql} LIMIT ${params.limit.value}`;
+  if (params.has('limit')) {
+    sql += ` LIMIT ${params.get('limit')}`;
   }
+  console.log(sql);
   return sql + ';';
 }
 
-module.exports = { searchQuery, writeResponse };
+export { writeResponse, searchQuery};
